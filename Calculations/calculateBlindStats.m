@@ -25,7 +25,7 @@ for com = itC
                     states = simulateStep(states, state2duration, p, q, neighbours, rSoma);
                 end
                 
-                initialStates(com) = 1; % inject current into compartment
+                states(com) = 1; % inject current into compartment
                 expectedArrival = t(com);
                 
                 while expectedArrival >= 1
