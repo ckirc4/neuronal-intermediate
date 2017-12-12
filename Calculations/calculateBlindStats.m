@@ -21,7 +21,7 @@ for com = itC
             for i = 1:nSim % simulate each scenario many times
                 
                 states = initialStates;
-                for w = 1:warmup
+                for w = 1:(0.75*warmup)+(rand/2)*warmup
                     states = simulateStep(states, state2duration, p, q, neighbours, rSoma);
                 end
                 
