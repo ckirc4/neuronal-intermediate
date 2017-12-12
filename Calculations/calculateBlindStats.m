@@ -3,7 +3,7 @@ function blindP = calculateBlindStats(t, neighbours, rSoma, state2duration, P, Q
 nH = length(P); % number of h values
 nK = length(Q); % numbber of k values
 nC = length(t); % number of compartments
-blindP = zeros(nH,nK,nC); % separate probability layer for each compartment
+blindP = nan(nH,nK,nC); % separate probability layer for each compartment
 
 itC = 1:nC;
 itC(rSoma) = []; % iterate only through non-soma compartments

@@ -24,10 +24,17 @@ fprintf('Time taken to simulate blindStats: %.2f seconds\n',toc);
 %% Visualisation
 nh = 1;
 nk = 3;
+scaled = true; % true: scale colours from min to max. false: scale colours from 0 to 1
 tic
-colours = getHeatmapColours(blindStats(nh,nk,:), parula); % map is a global variable; https://au.mathworks.com/help/matlab/ref/colormap.html
+colours = getHeatmapColours(blindStats(nh,nk,:), parula, scaled);
 drawNeuron(cC, data, thicknessMult, colours, 1);
 title(sprintf('Showing heatmap for P_h = %.8f, and P_k = %.8f\n',p_h(nh),p_k(nk)));
-colorbar;
+bar = colorbar;
+if scaled
+    for i = 1:length(bar.Ticks)
+        tick = bar.Ticks(i);
+        bar.TickLabels{i} = min(blindStats(nh,nk,:)) + tick*(max(blindStats(nh,nk,:)-min(blindStats(nh,nk,:))));
+    end
+end
 axis off
 fprintf('Time taken to generate plot: %.2f seconds\n',toc);
