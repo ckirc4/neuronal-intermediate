@@ -3,6 +3,7 @@ fileName = 'Custom_Neuron.swc';    % leave blank to open dialog box
 state2duration = 5;         % how many steps the refractory period lasts for
 thicknessMult = 4;          % thickness multiplier when drawing figure
 nSim = 50;                 % number of simulations per scenario
+warmup = 100;              % how many steps to simulate dynamics before injecting signal
 
 %% Calculations
 tic
@@ -17,7 +18,7 @@ fprintf('Time taken to calculate initial variables: %.2f seconds\n',toc);
 
 %% Simulation
 tic
-blindStats = calculateBlindStats(t, neighbours, rSoma, state2duration, p_h, p_k, nSim);
+blindStats = calculateBlindStats(t, neighbours, rSoma, state2duration, p_h, p_k, nSim, warmup);
 fprintf('Time taken to simulate blindStats: %.2f seconds\n',toc);
 
 %% Visualisation
