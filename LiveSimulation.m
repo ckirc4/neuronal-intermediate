@@ -1,9 +1,9 @@
 %% Parameters
-fileName = 'http://neuromorpho.org/dableFiles/rainnie/CNG%20version/P07-R2040910.CNG.swc';    % leave blank to open dialog box
-deltaT = 0.1;             % minimum time between frames (seconds)
+fileName = 'MI.CNG.swc';    % leave blank to open dialog box
+deltaT = 0.2;             % minimum time between frames (seconds)
 state2duration = 5;         % how many steps the refractory period lasts for
 thicknessMult = 4;          % thickness multiplier when drawing figure
-p_h = 0.0001;                 % probability that an impulse appears
+p_h = 0.1;                 % probability that an impulse appears
 p_k = 0.01;                 % probability that an impulse disappears
 
 %% Calculations

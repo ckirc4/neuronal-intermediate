@@ -1,8 +1,8 @@
 %% Parameters
-fileName = 'MI.CNG.swc';    % leave blank to open dialog box
+fileName = 'Custom_Neuron.swc';    % leave blank to open dialog box
 state2duration = 5;         % how many steps the refractory period lasts for
 thicknessMult = 4;          % thickness multiplier when drawing figure
-nSim = 100;                 % number of simulations per scenario
+nSim = 500;                 % number of simulations per scenario
 
 %% Calculations
 tic

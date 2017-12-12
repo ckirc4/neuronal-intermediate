@@ -1,9 +1,9 @@
 %% Parameters
-fileName = 'Custom_Neuron.swc';    % leave blank to open dialog box
+fileName = 'MI.CNG.swc';    % leave blank to open dialog box
 state2duration = 5;         % how many steps the refractory period lasts for
 thicknessMult = 4;          % thickness multiplier when drawing figure
-nSim = 50;                 % number of simulations per scenario
-warmup = 100;              % how many steps to simulate dynamics before injecting signal
+nSim = 10;                 % number of simulations per scenario
+warmup = 50;              % how many steps to simulate dynamics before injecting signal. should be larger than # compartments. (this will vary +/- 25%)
 
 %% Calculations
 tic
@@ -22,8 +22,8 @@ blindStats = calculateBlindStats(t, neighbours, rSoma, state2duration, p_h, p_k,
 fprintf('Time taken to simulate blindStats: %.2f seconds\n',toc);
 
 %% Visualisation
-nh = 1;
-nk = 3;
+nh = 4;
+nk = 1;
 scaled = true; % true: scale colours from min to max. false: scale colours from 0 to 1
 tic
 colours = getHeatmapColours(blindStats(nh,nk,:), parula, scaled);
