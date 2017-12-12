@@ -7,7 +7,7 @@ epsilon = 0.0001; % accounts for computational rounding
 Random = rand(n,2); % each compartment is assigned two random values to check p and q against
 statesN = statesO; % keep track of changes in states between each step
 
-for i = 1:n
+for i = [1 rSoma(end)+1:n] % consider soma as a single entity, i.e. somas comprised of a higher number of compartments won't have a higher chance of receiving signal. Point of contact to rest of dendritic tree is at first point
     if statesO(i) >= 1 - epsilon % i.e. if it is in state 1
         statesN(i) = 1 - deltaState;
         if Random(i,2) <= q
@@ -24,7 +24,7 @@ for i = 1:n
         end
         
     elseif statesO(i) <= epsilon % i.e. if it is in state 0
-        if Random(i,1) <= p && statesN(i) <= epsilon % && sum(i == rSoma) == 0 % signal can't originate in soma
+        if Random(i,1) <= p && statesN(i) <= epsilon 
             statesN(i) = 1; 
         end
         
