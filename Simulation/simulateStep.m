@@ -24,7 +24,7 @@ for i = 1:n
         end
         
     elseif statesO(i) <= epsilon % i.e. if it is in state 0
-        if Random(i,1) <= p && statesN(i) <= epsilon && sum(i == rSoma) == 0 % signal can't originate in soma
+        if Random(i,1) <= p && statesN(i) <= epsilon % && sum(i == rSoma) == 0 % signal can't originate in soma
             statesN(i) = 1; 
         end
         
