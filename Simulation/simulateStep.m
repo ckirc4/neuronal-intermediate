@@ -20,7 +20,7 @@ end
 n = length(statesO); % Number of COMPARTMENTS
 deltaState = 1/dur; % intermediate value between 0 and 1
 epsilon = 0.0001; % accounts for computational rounding
-Random = rand(n,2); % each compartment is assigned two random values to check p and q against
+Random = rand(n,3); % each compartment is assigned three random values to check p, q and the inhibitory probability against
 statesN = statesO; % keep track of changes in states between each step
 annihilationCount = 0;
 
@@ -55,11 +55,14 @@ for i = [1 rSoma(end)+1:n] % consider soma as a single entity, i.e. somas compri
         end
         
     elseif statesO(i) <= epsilon % i.e. if it is in state 0
-        if Random(i,1) <= p && statesN(i) <= epsilon 
+        if Random(i,1) <= p && statesN(i) <= epsilon % excitatory
             statesN(i) = 1; 
             births(i) = 1;
         end
         
+        % inhibitory
+        statesN(i) = 1 - deltaState;
+                
     else % i.e. it must be in state 2
         statesN(i) = statesO(i) - deltaState;
     end
