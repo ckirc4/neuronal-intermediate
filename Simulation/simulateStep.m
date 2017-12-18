@@ -1,8 +1,20 @@
-function [statesN, annihilationCount] = simulateStep(statesO, dur, p, q, neighbours, rSoma)
+function [statesN, annihilationCount, births] = simulateStep(statesO, dur, p, q, neighbours, rSoma, births)
 % Updates all states and keeps track of all births
+% births(i) == 1 implies that the signal in i'th compartment was born in
+% previous step
+% - if two signals annihilate each other head-on, # annihilation = 1
+% - if two signals combine (merge) into one, # annihilation = 1. This is
+% because the signal travelling from one active compartment to the other
+% active compartment technically gets annihilated (even if it's from the
+% same "birth" event), which is an intrinsic shortcoming that cannot be
+% avoided.
 
-if nargout < 1 || nargout > 2
+if nargout < 1 || nargout > 3
     error('Incorrect number of output variables.')
+elseif nargout == 2
+    error('Must output both annihilationCount and births.')
+elseif nargin == 3 && nargin ~= 7
+    error('When tracking annihilation events, must input the births variable from the previous step.')
 end
 
 n = length(statesO); % Number of COMPARTMENTS
@@ -25,14 +37,27 @@ for i = [1 rSoma(end)+1:n] % consider soma as a single entity, i.e. somas compri
             end
             if statesO(N) <= epsilon && statesN(N) <= epsilon % i.e. if neighbour is in state 0
                 statesN(N) = 1;
-            else % neighbour is in state 1
+            else % neighbour is in state 1 or 2
+                if N ~= 1 && ~isempty(find(rSoma == N,1)) % neighbour is part of soma, but not representative soma compartment (#1) - ignore collisions
+                    continue
+                end
+                if statesN(N) == 1 
+                    continue % signal will merge with neighbour's; don't annihilate
+                end
                 annihilationCount = annihilationCount + 1;
             end
+        end
+        if births(i) == 1
+            % was born in previous step
+            births(i) = 0;
+        elseif births(i) == 0
+            annihilationCount = annihilationCount - 1; % remove collision caused by signal colliding with its own trail - always happens except step after it's born
         end
         
     elseif statesO(i) <= epsilon % i.e. if it is in state 0
         if Random(i,1) <= p && statesN(i) <= epsilon 
             statesN(i) = 1; 
+            births(i) = 1;
         end
         
     else % i.e. it must be in state 2
