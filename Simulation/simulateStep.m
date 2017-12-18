@@ -61,7 +61,9 @@ for i = [1 rSoma(end)+1:n] % consider soma as a single entity, i.e. somas compri
         end
         
         % inhibitory
-        statesN(i) = 1 - deltaState;
+        if Random(i,3) <= 0.2*p
+            statesN(i) = 1 - deltaState;
+        end
                 
     else % i.e. it must be in state 2
         statesN(i) = statesO(i) - deltaState;
