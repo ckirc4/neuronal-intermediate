@@ -1,8 +1,8 @@
 %% Create video
 
-nFrames = 10;
+nFrames = 1800;
 fps = 15;
-res = [1920 1080]; % resolution (in pixels) [width height]
+res = [1280 720]; % resolution (in pixels) [width height]
 
 fileName = 'tree.swc';
 state2duration = 5;         % how many steps the refractory period lasts for
@@ -26,7 +26,7 @@ states = zeros(m-1,1); % keeps track of the state of each compartment
 tic
 colours = getTypeColours(data(:,2));        % colour according to type
 f = drawNeuron(cC, data, thicknessMult, colours, 1); % draws the full neuron and saves handles to each line
-set(gcf,'pos',[0 0 res res])
+set(gcf,'pos',[0 0 res(1) res(2)])
 fprintf('Time taken to draw neuron for the first time: %.2f seconds\n',toc);
 
 clear frames;
@@ -44,7 +44,7 @@ fprintf('Time taken to do simulation: %.2f seconds\n',toc);
 
 %% Create video file
 tic
-video = VideoWriter([fileName '.avi']);
+video = VideoWriter(['Videos/' fileName '.avi'], 'Uncompressed AVI');
 video.FrameRate = fps;
 open(video)
 video.writeVideo(frames);
