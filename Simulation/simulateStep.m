@@ -15,6 +15,8 @@ elseif nargout == 2
     error('Must output both annihilationCount and births.')
 elseif nargin == 3 && nargin ~= 7
     error('When tracking annihilation events, must input the births variable from the previous step.')
+elseif nargin == 6
+    births = zeros(length(statesO),1);
 end
 
 n = length(statesO); % Number of COMPARTMENTS
