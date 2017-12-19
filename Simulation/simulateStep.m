@@ -33,6 +33,9 @@ for i = [1 rSoma(end)+1:n] % consider soma as a single entity, i.e. somas compri
             continue; % code won't move on, hence impulse will not propagate
         end
         % go through neighbours
+        nRefractoryBranches = 0;
+        nActiveBranches = 0;
+        nInactiveBranches = 0;
         for N = neighbours(i,:)
             if N == 0
                 continue
@@ -46,6 +49,9 @@ for i = [1 rSoma(end)+1:n] % consider soma as a single entity, i.e. somas compri
                 if statesN(N) == 1 
                     continue % signal will merge with neighbour's; don't annihilate
                 end
+                if statesO(N) < 1-epsilon || statesN(N) < 1-epsilon % is in refractory state - don't annihilate
+                    continue
+                end
                 annihilationCount = annihilationCount + 1;
             end
         end
@@ -53,7 +59,7 @@ for i = [1 rSoma(end)+1:n] % consider soma as a single entity, i.e. somas compri
             % was born in previous step
             births(i) = 0;
         elseif births(i) == 0
-            annihilationCount = annihilationCount - 1; % remove collision caused by signal colliding with its own trail - always happens except step after it's born
+            % annihilationCount = annihilationCount - 1; % remove collision caused by signal colliding with its own trail - always happens except step after it's born
         end
         
     elseif statesO(i) <= epsilon % i.e. if it is in state 0
