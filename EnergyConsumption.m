@@ -2,14 +2,14 @@
 % period T. The ratio of those is the energy consumption.
 
 %% Parameters
-fileName = 'MartinNeurobiolDesease2013_E17_5MN_SOD1G93A_x60.CNG.swc';
+fileName = {'MI.CNG.swc', 'Custom_Neuron.swc', 'tree.swc', 'flower.swc', 'arch.swc', 'central.swc', 'sapling.swc', 'pattern.swc'};
 nFiles = length(fileName);
-T = 1000000; % time steps to simulate for
+T = 500000; % time steps to simulate for
 warmup = 50000; % time steps before tracking
 state2duration = 5;
 p_k = 0.005; % attenuation
 % h = [0.00001, 0.00002, 0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1:0.1:0.9]; % excitatory input
-[p_h, h] = calculatePh(-7:0.2:2);
+[p_h, h] = calculatePh(-8:0.2:3);
 
 
 for n = 1:nFiles
@@ -50,10 +50,10 @@ for n = 1:nFiles
             end
             % number of dendritic spikes: count the number of non-soma
             % compartments that are in state 1 (active)
-            dendriticSpikes(trial) = dendriticSpikes(trial) + sum(find(states(length(rSoma)+1:end)==1));
+            dendriticSpikes(trial) = dendriticSpikes(trial) + length(find(states(length(rSoma)+1:end)==1));
         end
         
-        fprintf('Calculated trial #%i (for h = %.6f) in %.2f seconds.\n',trial, h(trial), toc)
+        fprintf('Calculated trial #%i/%i (for h = %.6f) in %.2f seconds.\n',trial, length(h), h(trial), toc)
     end
     
     energyConsumption = dendriticSpikes ./ somaticSpikes;
@@ -77,5 +77,5 @@ for n = 1:nFiles
     
     %% Save
     save(['Benchmarks/Energy_Data_' FILE '_' num2str(min(h)) '-' num2str(max(h)) '.mat'],'T','p_k','p_h','h','energyConsumption','annihilations','dendriticSpikes','somaticSpikes')
-    
+    fprintf(['Finished calculation for ' FILE ' at ' datestr(datetime) '\n'])
 end
