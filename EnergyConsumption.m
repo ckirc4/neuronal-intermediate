@@ -2,8 +2,8 @@
 % period T. The ratio of those is the energy consumption.
 
 %% Parameters
-fileName = 'Custom_Neuron.swc';
-T = 10000000; % time steps to simulate for
+fileName = 'MartinNeurobiolDesease2013_E17_5MN_SOD1G93A_x60.CNG.swc';
+T = 1000000; % time steps to simulate for
 warmup = 10000; % time steps before tracking
 state2duration = 5;
 p_k = 0.005; % attenuation
@@ -55,9 +55,18 @@ end
 energyConsumption = dendriticSpikes ./ somaticSpikes;
 
 %% Plot
+subplot(1,3,1)
 semilogx(h,energyConsumption)
 hold on
-plot(h,annihilations/max(annihilations)+min(energyConsumption))
+%plot(h,(annihilations-min(annihilations))/max(annihilations)+min(energyConsumption))
 hold off
+subplot(1,3,2)
+semilogx(h,somaticSpikes)
+title('Number of somatic spikes')
+subplot(1,3,3)
+semilogx(h,dendriticSpikes)
+title('Number of dendritic spikes')
 
-save(['Energy_' fileName '_' num2str(trial) 'trials.mat'],'T','p_k','p_h','h','energyConsumption','annihilations','dendriticSpikes','somaticSpikes')
+
+%% Save
+save(['Energy_Trial_' fileName '_' num2str(trial) 'trials.mat'],'T','p_k','p_h','h','energyConsumption','annihilations','dendriticSpikes','somaticSpikes')

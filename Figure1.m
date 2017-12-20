@@ -46,6 +46,7 @@ fprintf('Time taken to do simulation: %.2f seconds\n',toc);
 tic
 video = VideoWriter(['Videos/' fileName '.avi'], 'Uncompressed AVI');
 video.FrameRate = fps;
+video.Quality = 100;
 open(video)
 video.writeVideo(frames);
 close(video);
