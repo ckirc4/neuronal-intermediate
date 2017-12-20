@@ -59,15 +59,20 @@ for n = 1:nFiles
     energyConsumption = dendriticSpikes ./ somaticSpikes;
     
     %% Plot
+    figure
+    set(gcf,'pos',[0 0 1500 1500])
     subplot(1,3,1)
     semilogx(h,energyConsumption)
     title('Energy consumption')
+    axis square
     subplot(1,3,2)
     semilogx(h,somaticSpikes)
     title('Number of somatic spikes')
+    axis square
     subplot(1,3,3)
     semilogx(h,dendriticSpikes)
     title('Number of dendritic spikes')
+    axis square
     saveas(gcf,['Benchmarks/Energy_Plot' FILE '_' num2str(min(h)) '-' num2str(max(h)) '.png']);
     
     %% Save
