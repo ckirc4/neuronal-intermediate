@@ -3,70 +3,74 @@
 
 %% Parameters
 fileName = 'MartinNeurobiolDesease2013_E17_5MN_SOD1G93A_x60.CNG.swc';
+nFiles = length(fileName);
 T = 1000000; % time steps to simulate for
-warmup = 10000; % time steps before tracking
+warmup = 50000; % time steps before tracking
 state2duration = 5;
 p_k = 0.005; % attenuation
 % h = [0.00001, 0.00002, 0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1:0.1:0.9]; % excitatory input
-[p_h, h] = calculatePh(-5:0.2:1);
+[p_h, h] = calculatePh(-7:0.2:2);
 
-%% Calculations
-tic
-addpath(genpath(pwd));                      % add all subfolders to current path
-data = readSwc(fileName);                   % select and load the data into Matlab
-m = size(data,1);                           % m = # POINTS, not COMPARTMENTS
-[cC, cP] = calculateConnections(data);      % represent the connections between compartments
-neighbours = findNeighbours(cC,cP);         % stores the neighbours of each compartment
-[t, rSoma, data] = timeToReachSoma(data);   % measures the number of steps it takes for a signal starting at each compartment to reach the soma
-fprintf('Time taken to calculate initial variables: %.2f seconds\n',toc);
 
-%% Simulation
-trial = 0; % index of h
-annihilations = zeros(length(h),1);
-dendriticSpikes = annihilations;
-somaticSpikes = annihilations;
-
-for P_H = p_h
+for n = 1:nFiles
+    FILE = fileName{n};
+    %% Calculations
     tic
-    states = zeros(m-1,1); % keeps track of the state of each compartment
-    births = zeros(size(states,1),1);
-    trial = trial + 1;
+    addpath(genpath(pwd));                      % add all subfolders to current path
+    data = readSwc(FILE);                   % select and load the data into Matlab
+    m = size(data,1);                           % m = # POINTS, not COMPARTMENTS
+    [cC, cP] = calculateConnections(data);      % represent the connections between compartments
+    neighbours = findNeighbours(cC,cP);         % stores the neighbours of each compartment
+    [t, rSoma, data] = timeToReachSoma(data);   % measures the number of steps it takes for a signal starting at each compartment to reach the soma
+    fprintf('Time taken to calculate initial variables: %.2f seconds\n',toc);
     
-    for i = 1:warmup
-        [states, aC, births] = simulateStep(states, state2duration, P_H, p_k, neighbours, rSoma, births);
-    end
+    %% Simulation
+    trial = 0; % index of h
+    annihilations = zeros(length(h),1);
+    dendriticSpikes = annihilations;
+    somaticSpikes = annihilations;
     
-
-    for i = 1:T
-        [states, aC, births] = simulateStep(states, state2duration, P_H, p_k, neighbours, rSoma, births);
+    for P_H = p_h
+        tic
+        states = zeros(m-1,1); % keeps track of the state of each compartment
+        births = zeros(size(states,1),1);
+        trial = trial + 1;
         
-        annihilations(trial) = annihilations(trial) + aC;
-        if states(1) == 1 % somatic spike - first compartment is representative member for the whole of the soma
-            somaticSpikes(trial) = somaticSpikes(trial) + 1;
+        for i = 1:warmup
+            [states, aC, births] = simulateStep(states, state2duration, P_H, p_k, neighbours, rSoma, births);
         end
-        % number of dendritic spikes: count the number of non-soma
-        % compartments that are in state 1 (active)
-        dendriticSpikes(trial) = dendriticSpikes(trial) + sum(find(states(length(rSoma)+1:end)==1));
+        
+        
+        for i = 1:T
+            [states, aC, births] = simulateStep(states, state2duration, P_H, p_k, neighbours, rSoma, births);
+            
+            annihilations(trial) = annihilations(trial) + aC;
+            if states(1) == 1 % somatic spike - first compartment is representative member for the whole of the soma
+                somaticSpikes(trial) = somaticSpikes(trial) + 1;
+            end
+            % number of dendritic spikes: count the number of non-soma
+            % compartments that are in state 1 (active)
+            dendriticSpikes(trial) = dendriticSpikes(trial) + sum(find(states(length(rSoma)+1:end)==1));
+        end
+        
+        fprintf('Calculated trial #%i (for h = %.6f) in %.2f seconds.\n',trial, h(trial), toc)
     end
     
-    fprintf('Calculated trial #%i (for h = %.6f) in %.2f seconds.\n',trial, h(trial), toc)
+    energyConsumption = dendriticSpikes ./ somaticSpikes;
+    
+    %% Plot
+    subplot(1,3,1)
+    semilogx(h,energyConsumption)
+    title('Energy consumption')
+    subplot(1,3,2)
+    semilogx(h,somaticSpikes)
+    title('Number of somatic spikes')
+    subplot(1,3,3)
+    semilogx(h,dendriticSpikes)
+    title('Number of dendritic spikes')
+    saveas(gcf,['Benchmarks/Energy_Plot' FILE '_' num2str(min(h)) '-' num2str(max(h)) '.png']);
+    
+    %% Save
+    save(['Benchmarks/Energy_Data_' FILE '_' num2str(min(h)) '-' num2str(max(h)) '.mat'],'T','p_k','p_h','h','energyConsumption','annihilations','dendriticSpikes','somaticSpikes')
+    
 end
-
-energyConsumption = dendriticSpikes ./ somaticSpikes;
-
-%% Plot
-subplot(1,3,1)
-semilogx(h,energyConsumption)
-hold on
-%plot(h,(annihilations-min(annihilations))/max(annihilations)+min(energyConsumption))
-hold off
-subplot(1,3,2)
-semilogx(h,somaticSpikes)
-title('Number of somatic spikes')
-subplot(1,3,3)
-semilogx(h,dendriticSpikes)
-title('Number of dendritic spikes')
-
-
-%% Save
-save(['Energy_Trial_' fileName '_' num2str(trial) 'trials.mat'],'T','p_k','p_h','h','energyConsumption','annihilations','dendriticSpikes','somaticSpikes')
