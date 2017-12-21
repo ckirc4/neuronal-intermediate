@@ -1,6 +1,6 @@
 %% Parameters
 fileName = input('Enter file name or URL: ','s');
-thicknessMult = 8;          % thickness multiplier when drawing figure
+thicknessMult = 2;          % thickness multiplier when drawing figure
 
 %% Calculations
 tic
