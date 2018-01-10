@@ -3,7 +3,7 @@ function [P_h, H] = calculatePh(logH)
 if nargin == 0
    seqMin = -5;
    seqMax = 2;
-   seqStep = 025;
+   seqStep = 0.25;
    logH = seqMin:seqMax:seqStep;
 end
 

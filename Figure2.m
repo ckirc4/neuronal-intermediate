@@ -1,7 +1,7 @@
 fileName = 'tree.swc';
 state2duration = 5;         % how many steps the refractory period lasts for
 thicknessMult = 4;          % thickness multiplier when drawing figure
-p_h = [10^-5, 10^-4, 10^-3, 10^-2];                 % probability that an impulse appears
+[p_h, h] = calculatePh(-5:0);                 % probability that an impulse appears
 p_k = 0.00001;               % probability that an impulse disappears
 nSim = 10000;                 % number of steps to simulate for each scenario (number of ms)
 warmup = 10000;
@@ -25,7 +25,7 @@ fprintf('Time taken to simulate firingRate: %.2f seconds\n',toc);
 %% Firing Rate Heatmap Visualisation
 close
 fig = 1;
-np = 4;
+np = 2;
 nk = 1;
 
 % drawFiringRateSubplot(firingRate, parula, true, cC, data, thicknessMult, fig, np, p_h, nk, p_k, [3 4]);
@@ -37,12 +37,12 @@ s = find(data(:,2) == 1,1); % find first soma point
 for q = length(p_k):-1:1
 F = firingRate(:,q,s); % extract the firing rates at the soma
 c(q,:) = [((length(p_k)+1-q)/(length(p_k))+0.5)/1.5 0 0]; % colour
-semilogx(H,F,'s-','Color',c(q,:),'MarkerSize',5,'MarkerFaceColor',c(q,:));
+semilogx(p_h,F,'s-','Color',c(q,:),'MarkerSize',5,'MarkerFaceColor',c(q,:));
 hold on
 end
 xlabel('h')
 ylabel('F (Hz)')
-title('Response function of the soma of Neuron C, for various values of P_k')
+title(['Response function of the soma of ' filename ' for various values of P_k'])
 cb = colorbar;
 cb.Ticks = 0+1/(2*length(p_k)):1/length(p_k):1-1/(2*length(p_k));
 cb.TickLabels = flip(p_k);
