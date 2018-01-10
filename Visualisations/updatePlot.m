@@ -5,7 +5,11 @@ for i = 1:length(f)
     if states(i) == 1
         f(i).Color = [1,0,0];
     elseif states(i) <= 0.00001
-        f(i).Color = colours(i);
+        thisColour = colours(i);
+        if thisColour == 'g'
+            thisColour = [0 0.5 0];
+        end
+        f(i).Color = thisColour;
     else
         f(i).Color = [1,165/255,0];
     end
