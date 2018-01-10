@@ -2,7 +2,7 @@
 % period T. The ratio of those is the energy consumption.
 
 %% Parameters
-fileName = {'MI.CNG.swc', 'Custom_Neuron.swc', 'tree.swc', 'flower.swc', 'arch.swc', 'central.swc', 'sapling.swc', 'pattern.swc'};
+fileName = {'layer.swc', 'layer_small.swc', 'layer_close.swc'};
 nFiles = length(fileName);
 T = 500000; % time steps to simulate for
 warmup = 50000; % time steps before tracking

@@ -1,10 +1,10 @@
 %% Parameters
-fileName = 'MI.CNG.swc';    % leave blank to open dialog box
-deltaT = 0.2;             % minimum time between frames (seconds)
+fileName = 'Custom_Neuron.swc';    % leave blank to open dialog box
+deltaT = .5;             % minimum time between frames (seconds)
 state2duration = 5;         % how many steps the refractory period lasts for
 thicknessMult = 4;          % thickness multiplier when drawing figure
-p_h = 0.1;                 % probability that an impulse appears
-p_k = 0.01;                 % probability that an impulse disappears
+p_h = 0.01;                 % probability that an impulse appears
+p_k = 0.00;                 % probability that an impulse disappears
 
 %% Calculations
 tic
