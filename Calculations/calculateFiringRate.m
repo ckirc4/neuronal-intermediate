@@ -1,4 +1,4 @@
-function firingRate = calculateFiringRate(t, neighbours, rSoma, state2duration, P, Q, nSim)
+function firingRate = calculateFiringRate(t, neighbours, rSoma, state2duration, P, Q, nSim, warmup)
 
 nH = length(P); % number of h values
 nK = length(Q); % numbber of k values
@@ -15,6 +15,10 @@ for h = 1:nH
         states = initialStates;
         
         fprintf('Now simulating p=%.8f, q=%.8f\n',p,q)
+        for w = 1:warmup
+            states = simulateStep(states, state2duration, p, q, neighbours, rSoma);
+        end
+        
         for i = 1:nSim % simulate many steps for each scenario
             
             states = simulateStep(states, state2duration, p, q, neighbours, rSoma);
