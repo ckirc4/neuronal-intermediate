@@ -1,6 +1,6 @@
 %% Create video
 
-nFrames = 1800;
+nFrames = 600;
 fps = 15;
 res = [1280 720]; % resolution (in pixels) [width height]
 
@@ -8,7 +8,11 @@ fileName = 'tree.swc';
 state2duration = 5;         % how many steps the refractory period lasts for
 thicknessMult = 4;          % thickness multiplier when drawing figure
 p_h = 0.00001;                 % probability that an impulse appears
-p_k = 0.00000005;                 % probability that an impulse disappears
+p_k = 0;               % probability that an impulse disappears
+
+% 1. P_h: 0.00001
+% 2. P_k: 0.03
+% 3. P_i: 1 * P_h
 
 %% Calculations
 tic
@@ -44,9 +48,9 @@ fprintf('Time taken to do simulation: %.2f seconds\n',toc);
 
 %% Create video file
 tic
-video = VideoWriter(['Videos/' fileName '.avi'], 'Uncompressed AVI');
+video = VideoWriter(['Videos/' fileName '.inhibition.avi'], 'Uncompressed AVI');
 video.FrameRate = fps;
-video.Quality = 100;
+%video.Quality = 100;
 open(video)
 video.writeVideo(frames);
 close(video);

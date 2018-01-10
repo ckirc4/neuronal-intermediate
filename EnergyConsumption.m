@@ -2,14 +2,14 @@
 % period T. The ratio of those is the energy consumption.
 
 %% Parameters
-fileName = {'MI.CNG.swc', 'Custom_Neuron.swc', 'tree.swc', 'flower.swc', 'arch.swc', 'central.swc', 'sapling.swc', 'pattern.swc'};
+fileName = {'tree.swc'}; 
 nFiles = length(fileName);
-T = 500000; % time steps to simulate for
-warmup = 50000; % time steps before tracking
+T = 1000000; % time steps to simulate for
+warmup = 100000; % time steps before tracking
 state2duration = 5;
-p_k = 0.005; % attenuation
+p_k = getPk(); % attenuation
 % h = [0.00001, 0.00002, 0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1:0.1:0.9]; % excitatory input
-[p_h, h] = calculatePh(-8:0.2:3);
+[p_h, h] = calculatePh(-7:0.2:1);
 
 
 for n = 1:nFiles
@@ -24,6 +24,7 @@ for n = 1:nFiles
     [t, rSoma, data] = timeToReachSoma(data);   % measures the number of steps it takes for a signal starting at each compartment to reach the soma
     fprintf('Time taken to calculate initial variables: %.2f seconds\n',toc);
     
+ for k = p_k
     %% Simulation
     trial = 0; % index of h
     annihilations = zeros(length(h),1);
@@ -37,12 +38,12 @@ for n = 1:nFiles
         trial = trial + 1;
         
         for i = 1:warmup
-            [states, aC, births] = simulateStep(states, state2duration, P_H, p_k, neighbours, rSoma, births);
+            [states, aC, births] = simulateStep(states, state2duration, P_H, k, neighbours, rSoma, births);
         end
         
         
         for i = 1:T
-            [states, aC, births] = simulateStep(states, state2duration, P_H, p_k, neighbours, rSoma, births);
+            [states, aC, births] = simulateStep(states, state2duration, P_H, k, neighbours, rSoma, births);
             
             annihilations(trial) = annihilations(trial) + aC;
             if states(1) == 1 % somatic spike - first compartment is representative member for the whole of the soma
@@ -53,7 +54,7 @@ for n = 1:nFiles
             dendriticSpikes(trial) = dendriticSpikes(trial) + length(find(states(length(rSoma)+1:end)==1));
         end
         
-        fprintf('Calculated trial #%i/%i (for h = %.6f) in %.2f seconds.\n',trial, length(h), h(trial), toc)
+        fprintf(['Calculated trial #%i/%i (for h = %.6f) in %.2f seconds at' datestr(datetime) '.\n'],trial, length(h), h(trial), toc)
     end
     
     energyConsumption = dendriticSpikes ./ somaticSpikes;
@@ -63,7 +64,7 @@ for n = 1:nFiles
     set(gcf,'pos',[0 0 1500 1500])
     subplot(1,3,1)
     semilogx(h,energyConsumption)
-    title('Energy consumption')
+    title(sprintf('Energy consumption (P_k = %.8f)',k))
     axis square
     subplot(1,3,2)
     semilogx(h,somaticSpikes)
@@ -73,9 +74,11 @@ for n = 1:nFiles
     semilogx(h,dendriticSpikes)
     title('Number of dendritic spikes')
     axis square
-    saveas(gcf,['Benchmarks/Energy_Plot' FILE '_' num2str(min(h)) '-' num2str(max(h)) '.png']);
+    saveas(gcf,['Benchmarks/Energy_Plot' FILE '_inh0pk' num2str(k) '.png']);
+    close
     
     %% Save
-    save(['Benchmarks/Energy_Data_' FILE '_' num2str(min(h)) '-' num2str(max(h)) '.mat'],'T','p_k','p_h','h','energyConsumption','annihilations','dendriticSpikes','somaticSpikes')
+    save(['Benchmarks/Energy_Data_' FILE '_inh0pk' num2str(k) '.mat'],'T','k','p_h','h','energyConsumption','annihilations','dendriticSpikes','somaticSpikes','warmup')
     fprintf(['Finished calculation for ' FILE ' at ' datestr(datetime) '\n'])
+ end
 end
