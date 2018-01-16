@@ -24,8 +24,8 @@ fprintf('Time taken to simulate firingRate: %.2f seconds\n',toc);
 
 %% Firing Rate Heatmap Visualisation
 close
-fig = 1;
-np = 2;
+fig = 2;
+np = 4;
 nk = 1;
 
 % drawFiringRateSubplot(firingRate, parula, true, cC, data, thicknessMult, fig, np, p_h, nk, p_k, [3 4]);
@@ -52,7 +52,7 @@ hold off
 
 %% Dynamic Range Heatmap Visualisation
 fig = 2;
-q = 6;
+q = 1;
 colours = getHeatmapColours(Delta(:,q), parula, true);
 drawNeuron(cC, data, thicknessMult, colours,fig);
 colorbar;
